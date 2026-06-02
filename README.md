@@ -74,12 +74,12 @@ bool validatePassword(String password) {
 ### Captura 1: Formulario Inválido
 *Formulario con datos erróneos que no cumplen las expresiones regulares, mostrando los mensajes de validación nativos activos en color rojo debajo de los campos de texto.*
 
-![Captura 1 - Formulario con Errores](mobile/assets/captura_errores.png)
+![alt text](image.png)
 
 ### Captura 2: Formulario Válido (Simulación de Envío)
 *Formulario con datos correctamente ingresados y el botón en estado de carga (ActivityIndicator / CircularProgressIndicator) simula el envío y se deshabilita por 2 segundos.*
 
-![Captura 2 - Formulario Válido y Cargando](mobile/assets/captura_valido.png)
+![alt text](image-1.png)
 
 ---
 
