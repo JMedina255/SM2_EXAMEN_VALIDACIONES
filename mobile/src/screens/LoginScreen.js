@@ -58,7 +58,29 @@ export default function LoginScreen() {
 
     if (hasError) return;
 
-    console.log('Validación RegExp exitosa');
+    // Iniciar simulación de envío (CA3)
+    setIsSubmittingManual(true);
+
+    setTimeout(async () => {
+      try {
+        const dummyUser = {
+          id: 2022074255,
+          firebase_uid: "manual_login_user_2022074255",
+          email: email.trim(),
+          display_name: email.trim().split('@')[0],
+          photo_url: "https://avatar.iran.liara.run/public/boy",
+          career: "Ingeniería de Sistemas",
+          student_code: "2022074255",
+          xp: 120,
+          level: "Novato",
+        };
+        await signIn(dummyUser);
+      } catch (err) {
+        Alert.alert('Error', 'Error al simular el inicio de sesión.');
+      } finally {
+        setIsSubmittingManual(false);
+      }
+    }, 2000);
   };
 
   const handleGoogleLogin = async () => {
