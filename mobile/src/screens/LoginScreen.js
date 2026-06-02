@@ -66,7 +66,9 @@ export default function LoginScreen() {
     setEmailError('');
     setPasswordError('');
 
-    const isBypass = email.trim() === 'admin' && password === 'admin';
+    const isBypassAdmin = email.trim() === 'admin' && password === 'admin';
+    const isBypassEstudiante = email.trim() === 'estudiante@upt.pe' && password === 'estudiante';
+    const isBypass = isBypassAdmin || isBypassEstudiante;
     let hasError = false;
 
     if (!isBypass) {
@@ -99,27 +101,44 @@ export default function LoginScreen() {
 
     setTimeout(async () => {
       try {
-        const dummyUser = isBypass ? {
-          id: 1,
-          firebase_uid: "admin_bypass_uid_00000",
-          email: "admin@virtual.upt.pe",
-          display_name: "Administrador UPT",
-          photo_url: "https://avatar.iran.liara.run/public/boy",
-          career: "Ingeniería de Sistemas",
-          student_code: "2022074255",
-          xp: 9999,
-          level: "Mentor Académico",
-        } : {
-          id: 2022074255,
-          firebase_uid: "manual_login_user_2022074255",
-          email: email.trim(),
-          display_name: email.trim().split('@')[0],
-          photo_url: "https://avatar.iran.liara.run/public/boy",
-          career: "Ingeniería de Sistemas",
-          student_code: "2022074255",
-          xp: 120,
-          level: "Novato",
-        };
+        let dummyUser;
+        if (isBypassAdmin) {
+          dummyUser = {
+            id: 1,
+            firebase_uid: "admin_bypass_uid_00000",
+            email: "admin@virtual.upt.pe",
+            display_name: "Administrador UPT",
+            photo_url: "https://avatar.iran.liara.run/public/boy",
+            career: "Ingeniería de Sistemas",
+            student_code: "2022074255",
+            xp: 9999,
+            level: "Mentor Académico",
+          };
+        } else if (isBypassEstudiante) {
+          dummyUser = {
+            id: 101,
+            firebase_uid: "student_bypass_uid_11111",
+            email: "estudiante@upt.pe",
+            display_name: "Joan Cristian Medina",
+            photo_url: "https://avatar.iran.liara.run/public/boy/3",
+            career: "Ingeniería de Sistemas",
+            student_code: "2022074255",
+            xp: 250,
+            level: "Tutor Junior",
+          };
+        } else {
+          dummyUser = {
+            id: 2022074255,
+            firebase_uid: "manual_login_user_2022074255",
+            email: email.trim(),
+            display_name: email.trim().split('@')[0],
+            photo_url: "https://avatar.iran.liara.run/public/boy",
+            career: "Ingeniería de Sistemas",
+            student_code: "2022074255",
+            xp: 120,
+            level: "Novato",
+          };
+        }
         await signIn(dummyUser);
       } catch (err) {
         Alert.alert('Error', 'Error al simular el inicio de sesión.');
