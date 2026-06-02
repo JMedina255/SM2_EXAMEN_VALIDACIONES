@@ -29,8 +29,36 @@ export default function LoginScreen() {
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
 
   const handleManualLogin = async () => {
-    // Commit 1: estructura de la función
-    console.log('Intento de login manual:', email, password);
+    // Resetear errores anteriores
+    setEmailError('');
+    setPasswordError('');
+
+    let hasError = false;
+
+    // Expresión regular para correo electrónico estándar (CA2)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email.trim()) {
+      setEmailError('El correo electrónico es requerido.');
+      hasError = true;
+    } else if (!emailRegex.test(email.trim())) {
+      setEmailError('Ingresa un formato de correo electrónico válido (ej. usuario@dominio.com).');
+      hasError = true;
+    }
+
+    // Expresión regular para contraseña (CA2)
+    // Exige mínimo 8 caracteres, al menos una letra mayúscula, una letra minúscula y un número
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!password) {
+      setPasswordError('La contraseña es requerida.');
+      hasError = true;
+    } else if (!passwordRegex.test(password)) {
+      setPasswordError('La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.');
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    console.log('Validación RegExp exitosa');
   };
 
   const handleGoogleLogin = async () => {
