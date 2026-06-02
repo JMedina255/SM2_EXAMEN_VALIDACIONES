@@ -67,7 +67,7 @@ export default function LoginScreen() {
     setPasswordError('');
 
     const isBypassAdmin = email.trim() === 'admin' && password === 'admin';
-    const isBypassEstudiante = email.trim() === 'estudiante@upt.pe' && password === 'estudiante';
+    const isBypassEstudiante = email.trim() === 'estudiante@upt.pe' && password === 'Estudiante@1';
     const isBypass = isBypassAdmin || isBypassEstudiante;
     let hasError = false;
 
