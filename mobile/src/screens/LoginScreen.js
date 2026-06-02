@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image, StatusBar, TextInput, Platform,
 } from 'react-native';
@@ -31,6 +31,35 @@ export default function LoginScreen() {
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
+  // Inyectar CSS global en web para ocultar el ojo nativo de Edge y corregir autofill de Chrome
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      const styleId = 'expo-web-input-bypass-fixes';
+      if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.type = 'text/css';
+        style.appendChild(document.createTextNode(`
+          /* Ocultar el ojo nativo de Edge/IE */
+          input::-ms-reveal,
+          input::-ms-clear {
+            display: none !important;
+          }
+          /* Ocultar botón de autocompletar credenciales de Chrome */
+          input::-webkit-contacts-auto-fill-button, 
+          input::-webkit-credentials-auto-fill-button {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+          }
+        `));
+        document.head.appendChild(style);
+      }
+    }
+  }, []);
 
   const handleManualLogin = async () => {
     // Resetear errores anteriores
@@ -167,18 +196,23 @@ export default function LoginScreen() {
         <View style={styles.formContainer}>
           {/* Campo Correo (CA1, CA3) */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Correo Institucional</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={18} color={COLORS.textMuted} style={{ marginRight: 10 }} />
+            <Text style={styles.fieldLabel}>Correo Institucional / ID</Text>
+            <View style={[
+              styles.inputContainer,
+              isEmailFocused && styles.inputContainerFocused
+            ]}>
+              <Ionicons name="mail-outline" size={18} color={isEmailFocused ? COLORS.primary : COLORS.textMuted} style={{ marginRight: 10 }} />
               <TextInput
                 style={styles.input}
-                placeholder="ejemplo@virtual.upt.pe"
+                placeholder="ejemplo@virtual.upt.pe o 'admin'"
                 placeholderTextColor={COLORS.textMuted}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                onFocus={() => setIsEmailFocused(true)}
+                onBlur={() => setIsEmailFocused(false)}
               />
             </View>
             {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
@@ -187,17 +221,22 @@ export default function LoginScreen() {
           {/* Campo Contraseña (CA1, CA3) */}
           <View style={styles.fieldGroup}>
             <Text style={styles.fieldLabel}>Contraseña</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={18} color={COLORS.textMuted} style={{ marginRight: 10 }} />
+            <View style={[
+              styles.inputContainer,
+              isPasswordFocused && styles.inputContainerFocused
+            ]}>
+              <Ionicons name="lock-closed-outline" size={18} color={isPasswordFocused ? COLORS.primary : COLORS.textMuted} style={{ marginRight: 10 }} />
               <TextInput
                 style={styles.input}
-                placeholder="Mín. 8 caracteres (A, a, 1)"
+                placeholder="Contraseña o 'admin'"
                 placeholderTextColor={COLORS.textMuted}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!isPasswordVisible}
                 autoCapitalize="none"
                 autoCorrect={false}
+                onFocus={() => setIsPasswordFocused(true)}
+                onBlur={() => setIsPasswordFocused(false)}
               />
               <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
                 <Ionicons name={isPasswordVisible ? "eye-off-outline" : "eye-outline"} size={20} color={COLORS.textMuted} />
@@ -263,10 +302,29 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.primary },
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    ...Platform.select({
+      web: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: SPACING.md,
+      },
+    }),
+  },
   topSection: {
     flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: SPACING.xl,
     overflow: 'hidden', position: 'relative',
+    ...Platform.select({
+      web: {
+        width: '100%',
+        maxWidth: 450,
+        flexGrow: 0,
+        flexShrink: 1,
+        paddingVertical: SPACING.lg,
+      },
+    }),
   },
   decorCircle1: {
     position: 'absolute', top: -60, right: -50,
@@ -295,6 +353,16 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: RADIUS.xl, borderTopRightRadius: RADIUS.xl,
     paddingHorizontal: SPACING.xl, paddingTop: SPACING.xl,
     ...SHADOWS.large,
+    ...Platform.select({
+      web: {
+        width: '100%',
+        maxWidth: 450,
+        alignSelf: 'center',
+        borderBottomLeftRadius: RADIUS.xl,
+        borderBottomRightRadius: RADIUS.xl,
+        marginVertical: SPACING.md,
+      },
+    }),
   },
   welcomeTitle: { fontSize: FONTS.sizes.xl, fontWeight: '800', color: COLORS.textPrimary, marginBottom: SPACING.xs },
   welcomeSub: { fontSize: FONTS.sizes.sm, color: COLORS.textSecondary, lineHeight: 20, marginBottom: SPACING.md },
@@ -321,12 +389,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.borderLight,
     paddingHorizontal: SPACING.md,
+    height: 48,
+  },
+  inputContainerFocused: {
+    borderColor: COLORS.primary,
+    borderWidth: 1.5,
   },
   input: {
     flex: 1,
-    paddingVertical: 10,
+    height: '100%',
     fontSize: FONTS.sizes.sm,
     color: COLORS.textPrimary,
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      },
+    }),
   },
   errorText: {
     fontSize: FONTS.sizes.xs,
