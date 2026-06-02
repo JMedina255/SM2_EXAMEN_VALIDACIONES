@@ -11,7 +11,7 @@ RCE UPT es una plataforma integral diseñada para estudiantes universitarios que
 *   **Nombre completo del alumno:** `Joan Cristian Medina Quispe`
 *   **Código de estudiante:** `2022074255`
 *   **Fecha:** `02/06/2026`
-*   **URL del repositorio público:** `https://github.com/JMedina255/SM2_EXAMEN_VALIDACIONES`
+*   **URL del repositorio público:** [https://github.com/JMedina255/SM2_EXAMEN_VALIDACIONES](https://github.com/JMedina255/SM2_EXAMEN_VALIDACIONES)
 
 ---
 
@@ -134,9 +134,5 @@ La plataforma utiliza una arquitectura moderna y escalable:
 
 ---
 
-## 📄 Documentación Adicional
-Para más detalles sobre las reglas de negocio, sistema de XP y roadmap completo, consulta la [Documentación Maestra](file:///DOCUMENTACION_PROYECTO.md).
-
----
 © 2026 - Proyecto de Móviles II - UPT
 
