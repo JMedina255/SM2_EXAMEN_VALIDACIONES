@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image, StatusBar, TextInput,
+  View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image, StatusBar, TextInput, Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -13,7 +13,9 @@ import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../constants/theme';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
+if (Platform.OS !== 'web') {
+  GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
+}
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -84,6 +86,10 @@ export default function LoginScreen() {
   };
 
   const handleGoogleLogin = async () => {
+    if (Platform.OS === 'web') {
+      Alert.alert('No compatible', 'El inicio de sesión nativo con Google no está soportado en la versión web.');
+      return;
+    }
     setIsLoading(true);
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
